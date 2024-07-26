@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Restaurants.Domain.Models
+﻿namespace Restaurants.Domain.Models
 {
     public class Dish
     {
@@ -12,5 +6,7 @@ namespace Restaurants.Domain.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public Decimal Price { get; set; }
+        public int KiloCaloriess { get; set; }
+        public Guid RestaurantId { get; set; } 
     }
 }

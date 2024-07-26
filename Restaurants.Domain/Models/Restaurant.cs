@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace Restaurants.Domain.Models
+﻿namespace Restaurants.Domain.Models
 {
     public class Restaurant
     {
