@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Restaurants.Domain.Interfaces.Repositories;
 using Restaurants.Infrastructure.Peristence;
+using Restaurants.Infrastructure.Repositories;
 using Restaurants.Infrastructure.Seeders;
 using Restaurants.Infrastructure.Seeders.Interfaces;
 
@@ -15,7 +17,8 @@ namespace Restaurants.Infrastructure.Extensions
             services.AddDbContext<RestaurantsDbContext>(options => options.UseNpgsql(connectionString));
 
 
-            services.AddScoped<IResturantSeeder, ResturantSeeder>();    
+            services.AddScoped<IResturantSeeder, ResturantSeeder>();
+            services.AddScoped<IRestaurantRepository, RestaurantRepository>();
         }
     }
 }
