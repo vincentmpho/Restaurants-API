@@ -21,25 +21,18 @@ namespace Restaurants.Application.Services
             _logger.LogInformation("Getting all restaurants");
             var restaurants = await _restaurantRepository.GetAllAsync();
 
-            var rstaurantsDto = restaurants.Select(r => new RestaurantDto() 
-            { 
-              Category = r.Category,
-              Description = r.Description,
-              Id = r.Id,
-              HasDelivery = r.HasDelivery,
-              Name = r.Name,
-              City = r.Address.City,
-              Street= r.Address.Street,
-              PostalCode= r.Address.PostalCode,
-            });
-            return rstaurantsDto;
+            var rstaurantsDtos = restaurants.Select(RestaurantDto.FromEntity); 
+          
+            return rstaurantsDtos!;
         }
 
         public async Task<RestaurantDto> GetById(Guid id)
         {
             _logger.LogInformation($"Getting Restaurants by ID {id}");
             var restaurants = await _restaurantRepository.GeyByIdAsync(id);
-            return restaurants;
+            var restaurantsDto = RestaurantDto.FromEntity(restaurants);
+
+            return restaurantsDto;
         }
     }
 }
