@@ -8,6 +8,16 @@ namespace Restaurants.Application.Mapping
     {
         public RestaurantsProfile()
         {
+            CreateMap<CreateRestaurantDto, Restaurant>()
+                .ForMember(d => d.Address, opt=> opt.MapFrom(
+                    src => new Address
+                    {
+                        City = src.City,
+                        PostalCode = src.PostalCode,
+                        Street = src.Street
+                    }));
+
+
             //From Source Type, Destination type
             CreateMap<Restaurant, RestaurantDto>()
 

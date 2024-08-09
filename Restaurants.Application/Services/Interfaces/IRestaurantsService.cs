@@ -17,5 +17,7 @@ namespace Restaurants.Application.Services.Interfaces
         /// <param name="id">The unique identifier of the restaurant.</param>
         /// <returns>Returns a Restaurant object representing the restaurant with the specified ID.</returns>
         Task<RestaurantDto> GetById(Guid id);
+
+        Task<Guid> Create(CreateRestaurantDto dto);
     }
 }

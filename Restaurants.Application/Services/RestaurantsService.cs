@@ -19,6 +19,16 @@ namespace Restaurants.Application.Services
             _logger = logger;
             _mapper = mapper;
         }
+
+        public async Task<Guid> Create(CreateRestaurantDto dto)
+        {
+            _logger.LogInformation("Creating a new restaurant");
+
+            var rstaurant = _mapper.Map<Restaurant>(dto);
+            Guid id = await _restaurantRepository.Create(rstaurant);
+                return id;
+        }
+
         public async Task<IEnumerable<RestaurantDto>> GetAllRestaurants()
         {
             _logger.LogInformation("Getting all restaurants");
