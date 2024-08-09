@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Restaurants.Application.DTOs;
+using Restaurants.Application.Services;
 using Restaurants.Application.Services.Interfaces;
 
 namespace Restaurants_API.Controllers
@@ -31,5 +33,23 @@ namespace Restaurants_API.Controllers
             }
             return StatusCode(StatusCodes.Status200OK, restaurant);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateRestaurant([FromBody] CreateRestaurantDto createRestaurantDto)
+        {
+            // Create the restaurant and get the ID
+            Guid id = await _restaurantsService.Create(createRestaurantDto);
+
+            // Optionally, retrieve the created restaurant to include it in the response
+            var createdRestaurant = await _restaurantsService.GetById(id);
+
+            // Return the created restaurant details along with the CreatedAtAction response
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id },
+                createdRestaurant
+            );
+        }
+
     }
 }
