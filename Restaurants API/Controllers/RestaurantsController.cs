@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Restaurants.Application.Commands.CreateRestaurant;
+using Restaurants.Application.Commands.DeleteRestaurant;
 using Restaurants.Application.Queries;
 
 namespace Restaurants_API.Controllers
@@ -49,6 +50,19 @@ namespace Restaurants_API.Controllers
                 new { id },
                 createdRestaurant
             );
+        }
+        [HttpDelete("{id}")]
+
+        public async Task<IActionResult> DeleteRestaurant([FromRoute] Guid id)
+        {
+            var isDeleted = await _mediator.Send(new DeleteRestaurantCommand(id));
+
+            if (isDeleted)
+            {
+                return StatusCode(StatusCodes.Status204NoContent, id);
+            }
+
+            return StatusCode(StatusCodes.Status404NotFound, id);
         }
 
     }
