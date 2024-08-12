@@ -8,5 +8,6 @@ namespace Restaurants.Domain.Interfaces.Repositories
         Task<Restaurant> GeyByIdAsync(Guid id);
         Task<Guid> Create(Restaurant entity);
         Task Delete(Restaurant entity);
+        Task SaveChanges();
     }
 }
