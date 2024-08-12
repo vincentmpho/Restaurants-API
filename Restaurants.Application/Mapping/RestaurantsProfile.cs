@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Restaurants.Application.Commands.CreateRestaurant;
 using Restaurants.Application.DTOs;
 using Restaurants.Domain.Models;
 
@@ -8,7 +9,7 @@ namespace Restaurants.Application.Mapping
     {
         public RestaurantsProfile()
         {
-            CreateMap<CreateRestaurantDto, Restaurant>()
+            CreateMap<CreateRestaurantCommand, Restaurant>()
                 .ForMember(d => d.Address, opt=> opt.MapFrom(
                     src => new Address
                     {
