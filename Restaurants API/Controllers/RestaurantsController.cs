@@ -1,9 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Restaurants.Application.Commands.CreateRestaurant;
 using Restaurants.Application.Commands.DeleteRestaurant;
 using Restaurants.Application.Commands.UpdateRestaurant;
 using Restaurants.Application.Queries;
+using Serilog;
 
 namespace Restaurants_API.Controllers
 {
@@ -19,67 +21,125 @@ namespace Restaurants_API.Controllers
         }
 
         [HttpGet]
-        public async Task< IActionResult> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var restaurants = await  _mediator.Send(new GetAllRestaurantsQuery());
-            return StatusCode(StatusCodes.Status200OK, restaurants);
+            try
+            {
+                Log.Information("Entering GetAll method.");
+
+                var restaurants = await _mediator.Send(new GetAllRestaurantsQuery());
+
+                Log.Information("Successfully retrieved all restaurants. Count: {Count}", restaurants.Count());
+
+                return StatusCode(StatusCodes.Status200OK, restaurants);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while getting all restaurants.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+            }
         }
 
         [HttpGet("{id}")]
-        public async Task< IActionResult> GetById(Guid id)  
+        public async Task<IActionResult> GetById(Guid id)
         {
-            var restaurant = await _mediator.Send(new GetRestaurantByIdQuery(id));
-            if (restaurant == null)
+            try
             {
-                return StatusCode(StatusCodes.Status404NotFound);
+                Log.Information("Entering GetById method with ID {Id}.", id);
+
+                var restaurant = await _mediator.Send(new GetRestaurantByIdQuery(id));
+
+                if (restaurant == null)
+                {
+                    Log.Warning("Restaurant with ID {Id} not found.", id);
+                    return StatusCode(StatusCodes.Status404NotFound);
+                }
+
+                Log.Information("Successfully retrieved restaurant with ID {Id}.", id);
+                return StatusCode(StatusCodes.Status200OK, restaurant);
             }
-            return StatusCode(StatusCodes.Status200OK, restaurant);
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while getting restaurant with ID {Id}.", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateRestaurant([FromBody] CreateRestaurantCommand command)
         {
-            // Create the restaurant and get the ID
-            Guid id = await _mediator.Send(command);
+            try
+            {
+                Log.Information("Entering CreateRestaurant method with command: {@Command}.", command);
 
-            // Optionally, retrieve the created restaurant to include it in the response
-            var createdRestaurant = await _mediator.Send(new GetRestaurantByIdQuery(id));
+                Guid id = await _mediator.Send(command);
 
-            // Return the created restaurant details along with the CreatedAtAction response
-            return CreatedAtAction(
-                nameof(GetById),
-                new { id },
-                createdRestaurant
-            );
+                var createdRestaurant = await _mediator.Send(new GetRestaurantByIdQuery(id));
+
+                Log.Information("Successfully created restaurant with ID {Id}.", id);
+
+                return CreatedAtAction(
+                    nameof(GetById),
+                    new { id },
+                    createdRestaurant
+                );
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while creating a restaurant.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+            }
         }
 
         [HttpPut("{id}")]
-
         public async Task<IActionResult> UpdateRestaurant([FromRoute] Guid id, UpdateRestaurantCommand command)
         {
-            command.Id = id;
-            var isUpdated = await _mediator.Send(command);
-
-            if (isUpdated)
+            try
             {
-                return StatusCode(StatusCodes.Status204NoContent, id);
-            }
+                Log.Information("Entering UpdateRestaurant method with ID {Id} and command: {@Command}.", id, command);
 
-            return StatusCode(StatusCodes.Status404NotFound, id);
+                command.Id = id;
+                var isUpdated = await _mediator.Send(command);
+
+                if (isUpdated)
+                {
+                    Log.Information("Successfully updated restaurant with ID {Id}.", id);
+                    return StatusCode(StatusCodes.Status204NoContent, id);
+                }
+
+                Log.Warning("Restaurant with ID {Id} not found for update.", id);
+                return StatusCode(StatusCodes.Status404NotFound, id);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while updating restaurant with ID {Id}.", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRestaurant([FromRoute] Guid id)
         {
-            var isDeleted = await _mediator.Send(new DeleteRestaurantCommand(id));
-
-            if (isDeleted)
+            try
             {
-                return StatusCode(StatusCodes.Status204NoContent, id);
+                Log.Information("Entering DeleteRestaurant method with ID {Id}.", id);
+
+                var isDeleted = await _mediator.Send(new DeleteRestaurantCommand(id));
+
+                if (isDeleted)
+                {
+                    Log.Information("Successfully deleted restaurant with ID {Id}.", id);
+                    return StatusCode(StatusCodes.Status204NoContent, id);
+                }
+
+                Log.Warning("Restaurant with ID {Id} not found for deletion.", id);
+                return StatusCode(StatusCodes.Status404NotFound, id);
             }
-
-            return StatusCode(StatusCodes.Status404NotFound, id);
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while deleting restaurant with ID {Id}.", id);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+            }
         }
-
     }
 }
