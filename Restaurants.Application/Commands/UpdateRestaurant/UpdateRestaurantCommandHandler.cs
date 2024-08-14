@@ -23,7 +23,7 @@ namespace Restaurants.Application.Commands.UpdateRestaurant
         public async Task<bool> Handle(UpdateRestaurantCommand request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Updating restaurant with id : {request.Id}");
-            var restaurant = await _restaurantRepository.GeyByIdAsync(request.Id);
+            var restaurant = await _restaurantRepository.GetByIdAsync(request.Id);
 
             if (restaurant == null)
             {

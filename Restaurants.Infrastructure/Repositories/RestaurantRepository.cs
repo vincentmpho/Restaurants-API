@@ -33,7 +33,7 @@ namespace Restaurants.Infrastructure.Repositories
             return restaurants;
         }
 
-        public async Task<Restaurant> GeyByIdAsync(Guid id)
+        public async Task<Restaurant> GetByIdAsync(Guid id)
         {
             var restaurants = await _dbContext.Restaurants.FirstOrDefaultAsync(x=> x.Id == id);
             return restaurants;
