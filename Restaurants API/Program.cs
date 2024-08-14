@@ -3,6 +3,7 @@ using Restaurants.Infrastructure.Seeders.Interfaces;
 using Restaurants.Application.Extensions;
 using Serilog;
 using Serilog.Events;
+using Restaurants_API.Middlewares;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,8 @@ builder.Host.UseSerilog((context, configuration) =>
    .ReadFrom.Configuration(context.Configuration)
 );
 
+//Register RequestTileLoggingMiddlewar
+builder.Services.AddScoped<RequestTimeLoggingMiddleware> ();
 
 var app = builder.Build();
 
@@ -33,7 +36,8 @@ var seeder = scope.ServiceProvider.GetRequiredService<IResturantSeeder>();
 
 await seeder.Seed();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline.'
+app.UseMiddleware<RequestTimeLoggingMiddleware>();
 app.UseSerilogRequestLogging();
 
 if (app.Environment.IsDevelopment())
