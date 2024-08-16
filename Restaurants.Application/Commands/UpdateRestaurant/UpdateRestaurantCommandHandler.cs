@@ -2,7 +2,9 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Restaurants.Application.Commands.DeleteRestaurant;
+using Restaurants.Domain.Extensions;
 using Restaurants.Domain.Interfaces.Repositories;
+using Restaurants.Domain.Models;
 
 namespace Restaurants.Application.Commands.UpdateRestaurant
 {
@@ -25,11 +27,7 @@ namespace Restaurants.Application.Commands.UpdateRestaurant
             _logger.LogInformation($"Updating restaurant with id : {request.Id}");
             var restaurant = await _restaurantRepository.GetByIdAsync(request.Id);
 
-            if (restaurant == null)
-            {
-                return false;
-            }
-           
+            if (restaurant == null) throw new NotFoundException(nameof(Restaurant), request.Id.ToString());
             restaurant.Name = request.Name;
             restaurant.Description = request.Description;
             restaurant.HasDelivery = request.HasDelivery;
