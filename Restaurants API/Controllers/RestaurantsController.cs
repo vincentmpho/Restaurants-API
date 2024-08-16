@@ -5,6 +5,7 @@ using Restaurants.Application.Commands.CreateRestaurant;
 using Restaurants.Application.Commands.DeleteRestaurant;
 using Restaurants.Application.Commands.UpdateRestaurant;
 using Restaurants.Application.Queries;
+using Restaurants.Application.Queries.GetAllRestaurants;
 using Serilog;
 
 namespace Restaurants_API.Controllers
