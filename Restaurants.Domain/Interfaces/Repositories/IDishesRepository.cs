@@ -5,5 +5,6 @@ namespace Restaurants.Domain.Interfaces.Repositories
     public interface IDishesRepository
     {
         Task<int> create(Dish entity);
+        Task Delete(IEnumerable<Dish> entities);
     }
 }
