@@ -26,10 +26,10 @@ namespace Restaurants_API.Controllers
             // Set the RestaurantId in the command from the route parameter
             command.RestaurantId = restaurantId;
 
-            await _mediator.Send(command);
-            return CreatedAtAction(nameof(CreateDish),
-                new { restaurantId = restaurantId },
-                command);
+            var dishId=  await _mediator.Send(command);
+
+            return CreatedAtAction(nameof(GetByIdForRestaurant),
+                new { restaurantId, dishId }, null);
         }
 
         [HttpGet]
