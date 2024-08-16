@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Restaurants.Application.Commands.CreateRestaurant;
 using Restaurants.Application.Commands.DeleteRestaurant;
 using Restaurants.Application.Commands.UpdateRestaurant;
