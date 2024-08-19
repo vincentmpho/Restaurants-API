@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Restaurants.Domain.Interfaces.Repositories;
+using Restaurants.Domain.Models;
 using Restaurants.Infrastructure.Peristence;
 using Restaurants.Infrastructure.Repositories;
 using Restaurants.Infrastructure.Seeders;
@@ -18,6 +19,10 @@ namespace Restaurants.Infrastructure.Extensions
             options.UseNpgsql(connectionString)
             .EnableSensitiveDataLogging());
 
+            //Register Autho
+            services.AddIdentityApiEndpoints<User>()
+                .AddEntityFrameworkStores<RestaurantsDbContext>();
+                
 
             services.AddScoped<IResturantSeeder, ResturantSeeder>();
             // Register repositories
