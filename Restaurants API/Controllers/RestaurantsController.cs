@@ -6,6 +6,7 @@ using Restaurants.Application.Commands.DeleteRestaurant;
 using Restaurants.Application.Commands.UpdateRestaurant;
 using Restaurants.Application.Queries;
 using Restaurants.Application.Queries.GetAllRestaurants;
+using Restaurants.Domain.Contants;
 using Serilog;
 
 namespace Restaurants_API.Controllers
@@ -69,6 +70,7 @@ namespace Restaurants_API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles =UserRoles.Owner)]
         public async Task<IActionResult> CreateRestaurant([FromBody] CreateRestaurantCommand command)
         {
             try
