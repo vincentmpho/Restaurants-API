@@ -2,43 +2,33 @@ using Restaurants.Infrastructure.Extensions;
 using Restaurants.Infrastructure.Seeders.Interfaces;
 using Restaurants.Application.Extensions;
 using Serilog;
-using Serilog.Events;
-using Restaurants_API.Middlewares;
-
+using Restaurants.Domain.Models;
+using Restaurants_API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 // Register infrastructure services
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.AddPresentation();
+
+// Register application services
 builder.Services.AddApplication();
-
-// Configure Serilog
-builder.Host.UseSerilog((context, configuration) =>
-     configuration
-   .ReadFrom.Configuration(context.Configuration)
-);
-
-//Register RequestTileLoggingMiddlewar
-builder.Services.AddScoped<RequestTimeLoggingMiddleware> ();
 
 var app = builder.Build();
 
- var scope = app.Services.CreateScope();
+// Create a scope for seeding initial data
+var scope = app.Services.CreateScope();
 var seeder = scope.ServiceProvider.GetRequiredService<IResturantSeeder>();
 
+// Seed initial data
 await seeder.Seed();
 
-// Configure the HTTP request pipeline.'
-app.UseMiddleware<RequestTimeLoggingMiddleware>();
+// Configure the HTTP request pipeline
+// Enable Serilog request logging
 app.UseSerilogRequestLogging();
+
+app.UseHttpsRedirection();
 
 if (app.Environment.IsDevelopment())
 {
@@ -46,7 +36,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Map API endpoints for identity
+app.MapGroup("api/identity")
+    .WithTags("Identity")
+    .MapIdentityApi<User>();
 
 app.UseAuthorization();
 
