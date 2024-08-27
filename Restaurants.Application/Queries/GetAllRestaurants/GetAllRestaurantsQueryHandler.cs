@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Restaurants.Application.Common;
 using Restaurants.Application.DTOs;
 using Restaurants.Domain.Interfaces.Repositories;
 
 namespace Restaurants.Application.Queries
 {
-    public class GetAllRestaurantsQueryHandler : IRequestHandler<GetAllRestaurantsQuery, IEnumerable<RestaurantDto>>
+    public class GetAllRestaurantsQueryHandler : IRequestHandler<GetAllRestaurantsQuery, PagedResult<RestaurantDto>>
     {
         private readonly ILogger<GetAllRestaurantsQueryHandler> _logger;
         private readonly IMapper _mapper;
@@ -19,12 +21,17 @@ namespace Restaurants.Application.Queries
             _mapper = mapper;
             _restaurantRepository = restaurantRepository;
         }
-        public async Task<IEnumerable<RestaurantDto>> Handle(GetAllRestaurantsQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResult<RestaurantDto>> Handle(GetAllRestaurantsQuery request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Getting all restaurants");
-            var restaurants = await _restaurantRepository.GetAllMatchingAsync(request.SerchPhrase);
+            var (restaurants, totalCount) = await _restaurantRepository.GetAllMatchingAsync(request.SerchPhrase,
+                request.pageSize,
+                request.pageNumber);
+
             var rstaurantsDtos = _mapper.Map<IEnumerable<RestaurantDto>>(restaurants);
-            return rstaurantsDtos!;
+
+            var result = new PagedResult<RestaurantDto>(rstaurantsDtos, totalCount, request.pageSize, request.pageNumber);
+            return result!;
         }
     }
 }
