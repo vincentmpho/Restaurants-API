@@ -33,7 +33,7 @@ namespace Restaurants_API.Controllers
 
                 var restaurants = await _mediator.Send(query);
 
-                Log.Information("Successfully retrieved all restaurants. Count: {Count}", restaurants.Count());
+                //Log.Information("Successfully retrieved all restaurants. Count: {Count}", restaurants.Count());
 
                 return StatusCode(StatusCodes.Status200OK, restaurants);
             }
