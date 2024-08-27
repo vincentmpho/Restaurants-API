@@ -25,13 +25,13 @@ namespace Restaurants_API.Controllers
 
         [HttpGet]
         [AllowAnonymous ]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] GetAllRestaurantsQuery query)
         {
             try
             {
                 Log.Information("Entering GetAll method.");
 
-                var restaurants = await _mediator.Send(new GetAllRestaurantsQuery());
+                var restaurants = await _mediator.Send(query);
 
                 Log.Information("Successfully retrieved all restaurants. Count: {Count}", restaurants.Count());
 

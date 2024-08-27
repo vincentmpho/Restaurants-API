@@ -9,6 +9,6 @@ namespace Restaurants.Domain.Interfaces.Repositories
         Task<Guid> Create(Restaurant entity);
         Task Delete(Restaurant entity);
         Task SaveChanges();
-
+        Task<IEnumerable<Restaurant>> GetAllMatchingAsync(string? searchPhrase);
     }
 }

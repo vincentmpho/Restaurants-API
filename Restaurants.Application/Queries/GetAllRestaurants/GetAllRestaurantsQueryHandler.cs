@@ -22,7 +22,7 @@ namespace Restaurants.Application.Queries
         public async Task<IEnumerable<RestaurantDto>> Handle(GetAllRestaurantsQuery request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Getting all restaurants");
-            var restaurants = await _restaurantRepository.GetAllAsync();
+            var restaurants = await _restaurantRepository.GetAllMatchingAsync(request.SerchPhrase);
             var rstaurantsDtos = _mapper.Map<IEnumerable<RestaurantDto>>(restaurants);
             return rstaurantsDtos!;
         }
